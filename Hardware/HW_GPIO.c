@@ -8,7 +8,6 @@
 #include "Hardware.h"
 BEEPER_MODE BeeperMode = BEEP_OFF;	//蜂鸣器的蜂鸣方式
 BLINK_MODE StatusBlinkMode = BLINK_OFF;	//状态指示灯闪烁模式 
-BLINK_MODE InfoBlinkMode = BLINK_OFF;	//消息指示灯闪烁模式 
 /*-----------------------------------------------------------------------
 *@brief		GPIO初始化为推挽输出模式
 *@param		GPIO时钟

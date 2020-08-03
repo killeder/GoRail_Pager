@@ -1,4 +1,4 @@
-﻿/*-----------------------------------------------------------------------
+/*------------------------------------------------------------------
 *@file     Application_Utils.c
 *@brief    应用层实用功能
 *@author   谢英男(xieyingnan1994@163.com）
@@ -331,9 +331,9 @@ void INT_TIMER_IRQHandler(void)
 			{ STATUS_LED_TOGGLE(); cnt_blink = 0; }
 			break;
 		case BLINK_SLOW:
-			if(cnt_blink <= 20) {STATUS_LED_ON();}	//亮200ms
-			else {STATUS_LED_OFF();}			//灭800ms
-			if(++cnt_blink >= 100)				//周期1000ms
+			if(cnt_blink <= 18) {STATUS_LED_ON();}	//亮180ms
+			else {STATUS_LED_OFF();}			//灭2020ms
+			if(++cnt_blink >= 220)				//周期2200ms
 				cnt_blink = 0;
 			break;
 		default:
