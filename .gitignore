@@ -66,6 +66,7 @@ JLinkLog.txt
 *.htm
 *.sct
 *.m*
+*.uvgui.*
 # Kernel Module Compile Results
 *.mod*
 *.cmd
