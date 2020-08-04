@@ -1,60 +1,76 @@
 /*-----------------------------------------------------------------------
 *@file     main.c
-*@brief    GoRail_Pager工程主文件
-*@author   谢英男(xieyingnan1994@163.com）
+*@brief    GoRail_Pager main procedure
+*@author   Xie Yinanan(xieyingnan1994@163.com）
 *@version  1.0
-*@date     2020/08/03
+*@date     2020/08/04
 -----------------------------------------------------------------------*/
 #include "GoRail_Pager.h"
 /*-----------------------------------------------------------------------
-*@brief		各个底层硬件初始化
-*@param		无
-*@retval	无
+*@brief		Intializations of several basic hardwares
+*@param		none
+*@retval	none
 -----------------------------------------------------------------------*/
-void HW_Base_Init(void)
+static void Basic_Hardware_Init(void)
 {
-	Delay_init();		//初始化Systick延时
-	HW_USART1_Init(115200);	//初始化串行口
-	IIC_GPIOConfig();	//初始化软件模拟IIC总线用到的GPIO口
+	Delay_init();		//Initialize of "SystemTick" timer for delay
+	HW_USART1_Init(115200);	//Initialize Serialport UART1 to 115200,N,8,1
+	IIC_GPIOConfig();	//Initialize GPIO port for simulating IIC time seq.
 	HW_GPIO_Init_Out(STATUS_LED_CLOCK,STATUS_LED_PORT,
 									STATUS_LED_PIN,GPIO_Mode_Out_PP);
-	STATUS_LED_OFF();	//关闭状态指示灯
+	STATUS_LED_OFF();	//Turn off Status LED
 	HW_GPIO_Init_Out(BUZZER_CLOCK,BUZZER_PORT,BUZZER_PIN,GPIO_Mode_Out_PP);
-	BUZZER_OFF();	//关闭蜂鸣器
-	HW_TIM_Interrupt_Init(INT_TIM_PERIOD,INT_TIM_PRESCALER);//初始化用于提供时基的定时器								
-	HW_TIM_Interrupt_Enable();	//打开时基定时器中断
-	OLED_Init();	//SSD1306 OLED屏幕初始化
+	BUZZER_OFF();	//Turn off buzzer
+	HW_TIM_Interrupt_Init(INT_TIM_PERIOD,INT_TIM_PRESCALER);
+					//Initialize timer for time-base use								
+	HW_TIM_Interrupt_Enable();	//Turn on timer interruption
+	OLED_Init();	//Initialize of SSD1306 OLED screen
 }
 /*-----------------------------------------------------------------------
-*@brief		主函数：程序入口
-*@param		无
-*@retval	无
+*@brief		Setting-up routain for system, execute after power-up
+*@param		none
+*@retval	none
+-----------------------------------------------------------------------*/
+static void Setup_Routain(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);//Open augment func. clock
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);//Disable JTAG, SWD only
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//Set IRQ priority group to 2
+
+	Basic_Hardware_Init();	//Initialize basic hardwares
+	ShowBuildInfo();	//Print build info on serialport
+	ShowSettings();	//Print setting items on serialport
+	ShowSplashScreen();	//Show splash screen and version info on OLED
+
+	CC1101_Initialize();//Detect CC1101 and initialize
+	CC1101_StartReceive(Rf_Rx_Callback);//Start receiving...
+}
+/*-----------------------------------------------------------------------
+*@brief		main procedure: entrance of this program.
+*@param		none
+*@retval	none
 -----------------------------------------------------------------------*/
 int main(void)
-{
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);	//打开复用功能时钟
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);	//关闭JTAG,只保留SWD
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//初始化中断向量组为组2
-	
-	HW_Base_Init();			//各个底层硬件初始化
-	ShowBuildInfo();		//串口打印版本信息
-	ShowSettings();			//串口打印设置项目
-	ShowSplashScreen();		//OLED显示开机画面和版本信息
-	CC1101_Initialize();	//检测CC1101并初始化设置
-	CC1101_StartReceive(Rx_Callback);	//开始接收
+{	
+	Setup_Routain();	//Do setting-up routain after power-up
 
 	while(true)
 	{
-		if(bDataArrivalFlag)
+		if(bit_IsTrue(System_Flags,SYSFLAG_DATA_ARRIVAL))
 		{
-			RxDataFeedProc();	//数据收妥后开始读取数据并处理显示
-			bDataArrivalFlag = false;//处理后清空标志位
+			StatusBlinkMode = BLINK_OFF;
+			STATUS_LED_ON();
+			RxData_Handler();//Handle rx data on data arrival
+			STATUS_LED_OFF();
+			StatusBlinkMode = BLINK_SLOW;
+			bit_SetFalse(System_Flags,SYSFLAG_DATA_ARRIVAL);
+							//Clear rx data arrival flag after handle it
 		}
-		//响应串口收妥标志位、解析串口传来的命令字符串				
+		//If serial port received a whole line, then parse it.				
 		if(bit_IsTrue(USART1_RxState,USART1_RXCOMPLETE_FLAG))
 		{
-			ParseSerialCmdLine((char*)USART1_RxBuffer);//若串口收妥一行数据则开始解析
-			USART1_RxState = 0;//清除数据收妥的标志位和数据计数
+			ParseSerialCmdLine((char*)USART1_RxBuffer);//Pase command line
+			USART1_RxState = 0;//Clear flag and counter
 		}
 	}
 }

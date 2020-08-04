@@ -1,31 +1,35 @@
 /*-----------------------------------------------------------------------
 *@file     GoRail_Pager.h
-*@brief    工程级头文件，在应用层包含此文件即可。
-*@author   谢英男(xieyingnan1994@163.com）
+*@brief    Project global include file, should be included in 
+*          application and system layer(aka. Hi-Layers).
+*@author   Xie Yingnan(xieyingnan1994@163.com）
 *@version  1.0
-*@date     2020/08/03
+*@date     2020/08/04
 -----------------------------------------------------------------------*/
 #ifndef GORAIL_PAGER_H
 #define GORAIL_PAGER_H
-/*-------------芯片级支持库-------------*/
+/*-------------Chip layer supporting-------------*/
 #include "stm32f10x.h"
-/*--------------C语言标准库-------------*/
+/*--------------Standard library of C------------*/
 #include <stdio.h>	//printf...
 #include <string.h>	//memcpy...
 #include <stdint.h>	//uint8_t...
 #include <stdbool.h>//C99:true...false...
 #include <stdarg.h> //C99:VA_ARGS...
 #include <stdlib.h> //atoi...
-/*----------底层硬件头文件集合----------*/
+/*----------Low-Layer Hardwares------- ---*/
 #include "Hardware.h"
-/*------------工程全局支持库------------*/
-#include "bit.h"	//快速位操作
-#include "delay.h"	//延时
-#include "POCSAG_ParseLBJ.h" //POCSAG解码列车接近预警信息程序
-#include "Application_Utils.h" //应用层实用功能
-/*-----------其他的全局宏定义-----------*/
+/*----------Hi-Layers utils and supporting------------*/
+#include "bit.h"	//bit operations
+#include "delay.h"	//delays
+#include "POCSAG_ParseLBJ.h" //POCSAG Parse fot LBJ message
+#include "Application_Utils.h" //Application layer uitls
+#include "ComPort_Utility.h" //SerialPort utilities
+#include "HMI_Display_Utils.h" //Human interface and display utilities
+#include "Setting_Utils.h"	//Load/Save/Restore settings with EEPROM
+/*-----------Other global definations-----------*/
 #ifndef MSG
-#define MSG(...) printf(__VA_ARGS__)	//定义调试信息输出宏
+#define MSG(...) printf(__VA_ARGS__)	//define debug printing macro
 #endif
 #ifdef DEBUG_ERR_CONSOLE_ON
 	#define MSG_ERR(num, str, val) \
@@ -33,14 +37,14 @@
 #else
 	#define MSG_ERR(num, str, val)
 #endif
-/* 定义警告消息输出宏MSG_WAR */
+/* Printing warning messages MSG_WAR */
 #ifdef DEBUG_WAR_CONSOLE_ON
 	#define MSG_WAR(num, str, val) \
 			MSG("%s,%d:0x%x %s 0x%x\n",__FILE__, __LINE__,num, str, val);
 #else
 	#define MSG_WAR(num, str, val)
 #endif
-/* 定义版本号和构建信息字符串 */
+/* Version and build info strings */
 #define APP_NAME_STR "GoRail_Pager"
 #define VERTION_STR "V1.0"
 #define BUILD_DATE_STR __DATE__

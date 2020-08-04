@@ -164,12 +164,12 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>0</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <Capability>1</Capability>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -413,6 +413,16 @@
               <FileType>1</FileType>
               <FilePath>..\App_User\Application_Utils.c</FilePath>
             </File>
+            <File>
+              <FileName>ComPort_Utility.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App_User\ComPort_Utility.c</FilePath>
+            </File>
+            <File>
+              <FileName>HMI_Display_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App_User\HMI_Display_Utils.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -432,6 +442,11 @@
               <FileName>POCSAG_ParseLBJ.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sys_Utils\POCSAG_ParseLBJ.c</FilePath>
+            </File>
+            <File>
+              <FileName>Setting_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\Setting_Utils.c</FilePath>
             </File>
           </Files>
         </Group>
