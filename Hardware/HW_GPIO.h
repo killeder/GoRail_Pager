@@ -31,6 +31,6 @@ void HW_GPIO_Init_In(u32 gpio_clk,GPIO_TypeDef * gpio,u16 gpio_pin);//GPIO初始
 
 typedef enum{BEEP_ONCE = 0,DBL_BEEP,BEEP_OFF} BEEPER_MODE;	//蜂鸣器蜂鸣模式
 extern BEEPER_MODE BeeperMode;
-typedef enum{BLINK_FAST,BLINK_SLOW,BLINK_OFF} BLINK_MODE;//状态指示灯闪烁模式
+typedef enum{BLINK_FAST,BLINK_SLOW,BLINK_OFF,BLINK_UNDEFINED} BLINK_MODE;//状态指示灯闪烁模式
 extern BLINK_MODE StatusBlinkMode;
 #endif
