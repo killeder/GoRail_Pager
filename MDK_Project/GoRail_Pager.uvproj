@@ -493,6 +493,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\HW_USART.c</FilePath>
             </File>
+            <File>
+              <FileName>HW_EEPROM_24CXX.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\HW_EEPROM_24CXX.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

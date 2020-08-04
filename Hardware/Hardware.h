@@ -1,4 +1,4 @@
-﻿/*-----------------------------------------------------------------------
+/*-----------------------------------------------------------------------
 *@file     Hardware.h
 *@brief    底层硬件的总体头文件,在需要包含硬件头文件时包含此文件即可。
 *@author   谢英男(xieyingnan1994@163.com）
@@ -25,6 +25,7 @@
 #include "HW_RADIO_CC1101.h"	//CC1101无线芯片驱动程序
 #include "HW_IIC_SoftSimulate.h"	//通过GPIO口模拟IIC总线程序
 #include "HW_SSD1306_OLED.h"	//OLED显示器驱动程序
+#include "HW_EEPROM_24CXX.h"	//EEPROM 24C04驱动程序
 /*-----------宏定义和一些参数------------*/
 #define CRIS_ENTER()	__set_PRIMASK(1)	//进入临界区，关闭总中断
 #define CRIS_EXIT()		__set_PRIMASK(0)	//退出临界区，开启总中断

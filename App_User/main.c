@@ -39,6 +39,7 @@ static void Setup_Routain(void)
 
 	Basic_Hardware_Init();	//Initialize basic hardwares
 	ShowBuildInfo();	//Print build info on serialport
+	Settings_Load();	//Load setting from external eeprom
 	ShowSettings();	//Print setting items on serialport
 	ShowSplashScreen();	//Show splash screen and version info on OLED
 

@@ -24,7 +24,7 @@ void CC1101_Initialize(void)
 	//turn on carrier detecting, turn off CRC filtering.
 	//Sync code is 0xEA27(reversed low 16-bit sync code of 
 	//standard POCSAG)
-	cc1101_state = CC1101_Setup(Rf_Freq,1.2f,4.5f,58.0f,0,16);
+	cc1101_state = CC1101_Setup(Settings.RF_Freq,1.2f,4.5f,58.0f,0,16);
 	MSG("CC1101 initialize ");
 	if(cc1101_state == RADIO_ERR_NONE)	//if setup is OK
 	{
@@ -80,6 +80,7 @@ void RxData_Handler(void)
 	uint32_t actual_len;//actual length of raw data, identical to batch_len
 						//when CC1101 was set to fix-length packet mode
 	POCSAG_RESULT PocsagMsg;//structure for storge POCSAG parse result
+	bool Enable_Show_LBJ = true;
 
 	if((batch_buff=(uint8_t*)malloc(batch_len*sizeof(uint8_t))) != NULL)
 	{
@@ -108,16 +109,23 @@ void RxData_Handler(void)
 			MSG("LBJ Message:%s.\r\n",PocsagMsg.txtMsg);//show decoded text message
 			if(PocsagMsg.Address == LBJ_MESSAGE_ADDR)
 			{
-				ShowMessageLBJ(&PocsagMsg,rssi,lqi);	//show LBJ message on OLED
-				switch(PocsagMsg.FuncCode)				//beeper beeps one or two times
+				if((PocsagMsg.txtMsg[0]=='9') &&
+				    bit_IsFalse(Settings.MiscFlags,FLAG_ENABLE_9XTRAIN_RX))
+				    Enable_Show_LBJ = false;//if Traincode is 9xxxx and settings do not
+					//enable showing 9xxxx trains, then skip this LBJ message.
+				if(Enable_Show_LBJ)
 				{
-					case FUNC_XIAXING:
-						BeeperMode = BEEP_ONCE;//beep one time
-						break;
-					case FUNC_SHANGXING:
-						BeeperMode = DBL_BEEP;//beep two times
-						break;
-					default: BeeperMode = DBL_BEEP; break;
+					ShowMessageLBJ(&PocsagMsg,rssi,lqi);	//show LBJ message on OLED
+					switch(PocsagMsg.FuncCode)				//beeper beeps one or two times
+					{
+						case FUNC_XIAXING:
+							BeeperMode = BEEP_ONCE;//beep one time
+							break;
+						case FUNC_SHANGXING:
+							BeeperMode = DBL_BEEP;//beep two times
+							break;
+						default: BeeperMode = DBL_BEEP; break;
+					}
 				}
 			}
 		}
