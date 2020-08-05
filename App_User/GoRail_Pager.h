@@ -46,7 +46,7 @@
 #endif
 /* Version and build info strings */
 #define APP_NAME_STR "GoRail_Pager"
-#define VERTION_STR "V1.0"
+#define VERTION_STR "V1.1"
 #define BUILD_DATE_STR __DATE__
 #define BUILD_TIME_STR __TIME__
 #endif

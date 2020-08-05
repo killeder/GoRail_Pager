@@ -14,8 +14,8 @@ Settings_t Settings;	//structure to store system settings
 #define DEFAULT_MQTT_BROKER		"66.42.74.53:1883"
 #define DEFAULT_MQTT_PUBTOPIC	"Test"
 #define DEFAULT_MQTT_SUBTOPIC	"Pager_Config"
-#define DEFAULT_SN_STR			"20200804-001"	
-#define DEFAULT_DESC_STR		"GoRailPager For Testing"
+#define DEFAULT_SN_STR			"20200805-001"	
+#define DEFAULT_DESC_STR		"GoRailPager_For_Testing"
 /*----------------Setting store address in EEPROM----------------------*/
 #define EEPROM_ADDR_SETTINGS	0
 /*-----------------------------------------------------------------------
