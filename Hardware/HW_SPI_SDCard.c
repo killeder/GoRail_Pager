@@ -57,40 +57,40 @@ SD_CardInfo SDCardInfo;	//用于存储卡的信息
   * @param  None
   * @retval None
   */
-void SD_DeInit(void)
-{
-	GPIO_InitTypeDef  GPIO_InitStructure;
+// void SD_DeInit(void)
+// {
+// 	GPIO_InitTypeDef  GPIO_InitStructure;
   
-  SPI_Cmd(SD_SPI, DISABLE); /*!< SD_SPI disable */
-  SPI_I2S_DeInit(SD_SPI);   /*!< DeInitializes the SD_SPI */
+//   SPI_Cmd(SD_SPI, DISABLE); /*!< SD_SPI disable */
+//   SPI_I2S_DeInit(SD_SPI);   /*!< DeInitializes the SD_SPI */
   
-  /*!< SD_SPI Periph clock disable */
-  RCC_APB1PeriphClockCmd(SD_SPI_CLK, DISABLE);
-  /*!< DeRemap SPI3 Pins */
-//  GPIO_PinRemapConfig(GPIO_Remap_SPI3, DISABLE);  
+//   /*!< SD_SPI Periph clock disable */
+//   RCC_APB1PeriphClockCmd(SD_SPI_CLK, DISABLE);
+//   /*!< DeRemap SPI3 Pins */
+// //  GPIO_PinRemapConfig(GPIO_Remap_SPI3, DISABLE);  
   
-  /*!< Configure SD_SPI pins: SCK */
-  GPIO_InitStructure.GPIO_Pin = SD_SPI_SCK_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(SD_SPI_SCK_GPIO_PORT, &GPIO_InitStructure);
+//   /*!< Configure SD_SPI pins: SCK */
+//   GPIO_InitStructure.GPIO_Pin = SD_SPI_SCK_PIN;
+//   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//   GPIO_Init(SD_SPI_SCK_GPIO_PORT, &GPIO_InitStructure);
 
-  /*!< Configure SD_SPI pins: MISO */
-  GPIO_InitStructure.GPIO_Pin = SD_SPI_MISO_PIN;
-  GPIO_Init(SD_SPI_MISO_GPIO_PORT, &GPIO_InitStructure);
+//   /*!< Configure SD_SPI pins: MISO*/
+//   GPIO_InitStructure.GPIO_Pin = SD_SPI_MISO_PIN;
+//   GPIO_Init(SD_SPI_MISO_GPIO_PORT, &GPIO_InitStructure);
 
-  /*!< Configure SD_SPI pins: MOSI */
-  GPIO_InitStructure.GPIO_Pin = SD_SPI_MOSI_PIN;
-  GPIO_Init(SD_SPI_MOSI_GPIO_PORT, &GPIO_InitStructure);
+//   /*!< Configure SD_SPI pins: MOSI */
+//   GPIO_InitStructure.GPIO_Pin = SD_SPI_MOSI_PIN;
+//   GPIO_Init(SD_SPI_MOSI_GPIO_PORT, &GPIO_InitStructure);
 
-  /*!< Configure SD_SPI_CS_PIN pin: SD Card CS pin */
-  GPIO_InitStructure.GPIO_Pin = SD_CS_PIN;
-  GPIO_Init(SD_CS_GPIO_PORT, &GPIO_InitStructure);
+//   /*!< Configure SD_SPI_CS_PIN pin: SD Card CS pin */
+//   GPIO_InitStructure.GPIO_Pin = SD_CS_PIN;
+//   GPIO_Init(SD_CS_GPIO_PORT, &GPIO_InitStructure);
 
-  /*!< Configure SD_SPI_DETECT_PIN pin: SD Card detect pin */
-//  GPIO_InitStructure.GPIO_Pin = SD_DETECT_PIN;
-//  GPIO_Init(SD_DETECT_GPIO_PORT, &GPIO_InitStructure);
+//   /*!< Configure SD_SPI_DETECT_PIN pin: SD Card detect pin */
+// //  GPIO_InitStructure.GPIO_Pin = SD_DETECT_PIN;
+// //  GPIO_Init(SD_DETECT_GPIO_PORT, &GPIO_InitStructure);
 
-}
+// }
 
 
 static void GPIO_Configuration(void)
@@ -184,7 +184,7 @@ SD_Error SD_Init(void)
 	do
 	{
 		SD_GetCardType();
-	}while(SD_Type == SD_TYPE_NOT_SD && i-- > 0);
+	}while(SD_Type == SD_TYPE_NOT_SD && --i > 0);
 	
 	//不支持的卡
 	if(SD_Type == SD_TYPE_NOT_SD)
@@ -199,17 +199,17 @@ SD_Error SD_Init(void)
  * @param  None
  * @retval Return if SD is detected or not
  */
-uint8_t SD_Detect(void)
-{
-  __IO uint8_t status = SD_PRESENT;
+// uint8_t SD_Detect(void)
+// {
+//   __IO uint8_t status = SD_PRESENT;
 
-  /*!< Check GPIO to detect SD */
-//  if (GPIO_ReadInputData(SD_DETECT_GPIO_PORT) & SD_DETECT_PIN)
-//  {
-//    status = SD_NOT_PRESENT;
-//  }
-  return status;
-}
+//   /*!< Check GPIO to detect SD */
+// //  if (GPIO_ReadInputData(SD_DETECT_GPIO_PORT) & SD_DETECT_PIN)
+// //  {
+// //    status = SD_NOT_PRESENT;
+// //  }
+//   return status;
+// }
 
 /**
   * @brief  Returns information about specific card.
@@ -255,55 +255,55 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
-{
-  uint32_t i = 0;
-  SD_Error rvalue = SD_RESPONSE_FAILURE;
+// SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
+// {
+//   uint32_t i = 0;
+//   SD_Error rvalue = SD_RESPONSE_FAILURE;
 	
-	//SDHC卡块大小固定为512，且读命令中的地址的单位是sector
-	if (SD_Type == SD_TYPE_V2HC)
-  {
-    BlockSize = 512;
-    ReadAddr /= 512;
-  }
+// 	//SDHC卡块大小固定为512，且读命令中的地址的单位是sector
+// 	if (SD_Type == SD_TYPE_V2HC)
+//   {
+//     BlockSize = 512;
+//     ReadAddr /= 512;
+//   }
 
-  /*!< SD chip select low */
-  SD_CS_LOW();
+//   /*!< SD chip select low */
+//   SD_CS_LOW();
   
-  /*!< Send CMD17 (SD_CMD_READ_SINGLE_BLOCK) to read one block */
-  SD_SendCmd(SD_CMD_READ_SINGLE_BLOCK, ReadAddr, 0xFF);
+//   /*!< Send CMD17 (SD_CMD_READ_SINGLE_BLOCK) to read one block */
+//   SD_SendCmd(SD_CMD_READ_SINGLE_BLOCK, ReadAddr, 0xFF);
   
-  /*!< Check if the SD acknowledged the read block command: R1 response (0x00: no errors) */
-  if (!SD_GetResponse(SD_RESPONSE_NO_ERROR))
-  {
-    /*!< Now look for the data token to signify the start of the data */
-    if (!SD_GetResponse(SD_START_DATA_SINGLE_BLOCK_READ))
-    {
-      /*!< Read the SD block data : read NumByteToRead data */
-      for (i = 0; i < BlockSize; i++)
-      {
-        /*!< Save the received data */
-        *pBuffer = SD_ReadByte();
+//   /*!< Check if the SD acknowledged the read block command: R1 response (0x00: no errors) */
+//   if (!SD_GetResponse(SD_RESPONSE_NO_ERROR))
+//   {
+//     /*!< Now look for the data token to signify the start of the data */
+//     if (!SD_GetResponse(SD_START_DATA_SINGLE_BLOCK_READ))
+//     {
+//       /*!< Read the SD block data : read NumByteToRead data */
+//       for (i = 0; i < BlockSize; i++)
+//       {
+//         /*!< Save the received data */
+//         *pBuffer = SD_ReadByte();
        
-        /*!< Point to the next location where the byte read will be saved */
-        pBuffer++;
-      }
-      /*!< Get CRC bytes (not really needed by us, but required by SD) */
-      SD_ReadByte();
-      SD_ReadByte();
-      /*!< Set response value to success */
-      rvalue = SD_RESPONSE_NO_ERROR;
-    }
-  }
-  /*!< SD chip select high */
-  SD_CS_HIGH();
+//         /*!< Point to the next location where the byte read will be saved */
+//         pBuffer++;
+//       }
+//       /*!< Get CRC bytes (not really needed by us, but required by SD) */
+//       SD_ReadByte();
+//       SD_ReadByte();
+//       /*!< Set response value to success */
+//       rvalue = SD_RESPONSE_NO_ERROR;
+//     }
+//   }
+//   /*!< SD chip select high */
+//   SD_CS_HIGH();
   
-  /*!< Send dummy byte: 8 Clock pulses of delay */
-  SD_WriteByte(SD_DUMMY_BYTE);
+//   /*!< Send dummy byte: 8 Clock pulses of delay */
+//   SD_WriteByte(SD_DUMMY_BYTE);
   
-  /*!< Returns the reponse */
-  return rvalue;
-}
+//   /*!< Returns the reponse */
+//   return rvalue;
+// }
 
 /**
   * @brief  Reads multiple block of data from the SD.
@@ -384,59 +384,59 @@ SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockS
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
-{
-  uint32_t i = 0;
-  SD_Error rvalue = SD_RESPONSE_FAILURE;
+// SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
+// {
+//   uint32_t i = 0;
+//   SD_Error rvalue = SD_RESPONSE_FAILURE;
 	
-	//SDHC卡块大小固定为512，且写命令中的地址的单位是sector
-	if (SD_Type == SD_TYPE_V2HC)
-  {
-    BlockSize = 512;
-    WriteAddr /= 512;
-  }
+// 	//SDHC卡块大小固定为512，且写命令中的地址的单位是sector
+// 	if (SD_Type == SD_TYPE_V2HC)
+//   {
+//     BlockSize = 512;
+//     WriteAddr /= 512;
+//   }
 
-  /*!< SD chip select low */
-  SD_CS_LOW();
+//   /*!< SD chip select low */
+//   SD_CS_LOW();
 
-  /*!< Send CMD24 (SD_CMD_WRITE_SINGLE_BLOCK) to write multiple block */
-  SD_SendCmd(SD_CMD_WRITE_SINGLE_BLOCK, WriteAddr, 0xFF);
+//   /*!< Send CMD24 (SD_CMD_WRITE_SINGLE_BLOCK) to write multiple block */
+//   SD_SendCmd(SD_CMD_WRITE_SINGLE_BLOCK, WriteAddr, 0xFF);
   
-  /*!< Check if the SD acknowledged the write block command: R1 response (0x00: no errors) */
-  if (!SD_GetResponse(SD_RESPONSE_NO_ERROR))
-  {
-    /*!< Send a dummy byte */
-    SD_WriteByte(SD_DUMMY_BYTE);
+//   /*!< Check if the SD acknowledged the write block command: R1 response (0x00: no errors) */
+//   if (!SD_GetResponse(SD_RESPONSE_NO_ERROR))
+//   {
+//     /*!< Send a dummy byte */
+//     SD_WriteByte(SD_DUMMY_BYTE);
 
-    /*!< Send the data token to signify the start of the data */
-    SD_WriteByte(0xFE);
+//     /*!< Send the data token to signify the start of the data */
+//     SD_WriteByte(0xFE);
 
-    /*!< Write the block data to SD : write count data by block */
-    for (i = 0; i < BlockSize; i++)
-    {
-      /*!< Send the pointed byte */
-      SD_WriteByte(*pBuffer);
-      /*!< Point to the next location where the byte read will be saved */
-      pBuffer++;
-    }
-    /*!< Put CRC bytes (not really needed by us, but required by SD) */
-    SD_ReadByte();
-    SD_ReadByte();
+//     /*!< Write the block data to SD : write count data by block */
+//     for (i = 0; i < BlockSize; i++)
+//     {
+//       /*!< Send the pointed byte */
+//       SD_WriteByte(*pBuffer);
+//       /*!< Point to the next location where the byte read will be saved */
+//       pBuffer++;
+//     }
+//     /*!< Put CRC bytes (not really needed by us, but required by SD) */
+//     SD_ReadByte();
+//     SD_ReadByte();
 
-    /*!< Read data response */
-    if (SD_GetDataResponse() == SD_DATA_OK)
-    {
-      rvalue = SD_RESPONSE_NO_ERROR;
-    }
-  }
-  /*!< SD chip select high */
-  SD_CS_HIGH();
-  /*!< Send dummy byte: 8 Clock pulses of delay */
-  SD_WriteByte(SD_DUMMY_BYTE);
+//     /*!< Read data response */
+//     if (SD_GetDataResponse() == SD_DATA_OK)
+//     {
+//       rvalue = SD_RESPONSE_NO_ERROR;
+//     }
+//   }
+//   /*!< SD chip select high */
+//   SD_CS_HIGH();
+//   /*!< Send dummy byte: 8 Clock pulses of delay */
+//   SD_WriteByte(SD_DUMMY_BYTE);
 
-  /*!< Returns the reponse */
-  return rvalue;
-}
+//   /*!< Returns the reponse */
+//   return rvalue;
+// }
 
 /**
   * @brief  Writes many blocks on the SD

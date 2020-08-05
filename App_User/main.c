@@ -41,6 +41,7 @@ static void Setup_Routain(void)
 	ShowBuildInfo();	//Print build info on serialport
 	Settings_Load();	//Load setting from external eeprom
 	ShowSettings();	//Print setting items on serialport
+	ChkCard_CreateLog();//Check SD card presence and make logging file
 	ShowSplashScreen();	//Show splash screen and version info on OLED
 
 	CC1101_Initialize();//Detect CC1101 and initialize

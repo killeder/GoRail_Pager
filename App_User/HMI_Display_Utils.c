@@ -10,7 +10,7 @@
 *@brief		Show decoded LBJ info on OLED
 *@param		LBJ_Msg - pointer to text LBJ message
 *           rssi,lqi - RSSI and LQI read from CC1101 driver
-*@retval	无
+*@retval	none
 -----------------------------------------------------------------------*/
 void ShowMessageLBJ(POCSAG_RESULT* POCSAG_Msg,float rssi,uint8_t lqi)
 {

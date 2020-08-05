@@ -341,7 +341,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -422,6 +422,11 @@
               <FileName>Radio_Utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App_User\Radio_Utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>Logging_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App_User\Logging_Utils.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -29,6 +29,7 @@
 #include "Radio_Utils.h" //Radio receiving utils
 #include "ComPort_Utility.h" //SerialPort utilities
 #include "HMI_Display_Utils.h" //Human interface and display utilities
+#include "Logging_Utils.h"	//Data Logging utility using FATFS and SDcard
 /*-----------Other global definations-----------*/
 #ifndef MSG
 #define MSG(...) printf(__VA_ARGS__)	//define debug printing macro
