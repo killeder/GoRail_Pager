@@ -409,11 +409,6 @@
               <FilePath>..\App_User\main.c</FilePath>
             </File>
             <File>
-              <FileName>Application_Utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App_User\Application_Utils.c</FilePath>
-            </File>
-            <File>
               <FileName>ComPort_Utility.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App_User\ComPort_Utility.c</FilePath>
@@ -422,6 +417,11 @@
               <FileName>HMI_Display_Utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App_User\HMI_Display_Utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>Radio_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App_User\Radio_Utils.c</FilePath>
             </File>
           </Files>
         </Group>
