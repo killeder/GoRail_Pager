@@ -110,3 +110,65 @@ void ShowAttentionInfo(void)
 	OLED_ShowString(0*8,4,"  Please Check! ",16);
 	OLED_ShowString(0*8,6,"System Halting..",16);
 }
+/*-----------------------------------------------------------------------
+*@brief		Timer IRQ for providing Time-base for indicators use
+*@detail 	Timer IRQ cycle is determined when Timer init.
+*         	10ms in this program.
+*@param		none
+*@retval	none
+-----------------------------------------------------------------------*/
+void INT_TIMER_IRQHandler(void)
+{
+	static uint8_t cnt_beep = 0,cnt_beeptimes = 0;
+	static uint8_t cnt_blink = 0;
+
+	if(TIM_GetITStatus(INT_TIMER,TIM_IT_Update)!=RESET)
+	{
+		switch(BeeperMode)	//beeping
+		{
+		case BEEP_ONCE:	//beep one time
+			BUZZER_ON();
+			if(++cnt_beep >= 10)
+			{ BUZZER_OFF(); BeeperMode = BEEP_OFF; }
+			break;
+		case DBL_BEEP: 
+			if(cnt_beeptimes < 2)
+			{
+				if(cnt_beep <= 8) {BUZZER_ON();}	//beep80ms
+				else {BUZZER_OFF();}				//stop80ms
+				if(++cnt_beep >= 16)				//cycle160ms
+				{cnt_beep = 0; cnt_beeptimes++;}
+			}
+			else
+				BeeperMode = BEEP_OFF;	//stop after 2 beeps
+			break;
+		default:
+			BUZZER_OFF();	//default:turn off beeper
+			cnt_beep = 0;	//clear counter var
+			cnt_beeptimes = 0; //clear beep times countet var
+			break;
+		}
+
+		switch(StatusBlinkMode)	//status led
+		{
+		case BLINK_FAST:
+			if(++cnt_blink >= 10)	//cycle200ms,50%duty
+			{ STATUS_LED_TOGGLE(); cnt_blink = 0; }
+			break;
+		case BLINK_SLOW:
+			if(cnt_blink <= 18) {STATUS_LED_ON();}	//on 180ms
+			else {STATUS_LED_OFF();}			//off 2020ms
+			if(++cnt_blink >= 220)				//cycle 2200ms
+				cnt_blink = 0;
+			break;
+		case BLINK_OFF:
+			STATUS_LED_OFF();
+			cnt_blink = 0;
+			StatusBlinkMode = BLINK_UNDEFINED;
+			break;
+		default:		
+			break;
+		}
+	}
+	TIM_ClearITPendingBit(INT_TIMER,TIM_IT_Update);
+}
