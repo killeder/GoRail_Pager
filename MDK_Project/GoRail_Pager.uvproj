@@ -498,6 +498,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\HW_EEPROM_24CXX.c</FilePath>
             </File>
+            <File>
+              <FileName>HW_RTC_DS3231.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\HW_RTC_DS3231.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

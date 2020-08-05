@@ -9,7 +9,7 @@
 
 Settings_t Settings;	//structure to store system settings
 /*--------default values used when read EEPROM failed------------------*/
-#define DEFAULT_RF_FREQUENCY	821.8375f
+#define DEFAULT_RF_FREQUENCY	821.2375f
 #define DEFAULT_MISCFLAGS		(FLAG_ENABLE_9XTRAIN_RX|FLAG_WLAN_SMARTCONFIG)
 #define DEFAULT_MQTT_BROKER		"66.42.74.53:1883"
 #define DEFAULT_MQTT_PUBTOPIC	"Test"

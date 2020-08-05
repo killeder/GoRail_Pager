@@ -37,7 +37,10 @@ void ShowSettings(void)
 	MSG("MQTT SubTopic:%s\r\n",Settings.MQTT_SubTopic);
 	MSG("String SN:%s\r\n",Settings.SN_Str);
 	MSG("String Descriptor:%s\r\n",Settings.Desc_Str);
-	MSG("RTC:20%02hhu-%02hhu-%02hhu %02hhu:%02hhu:%02hhu\r\n",0,0,0,0,0,0);
+	GetTime_RTC(&RTC_Time);	//get time from ds3231 rtc
+	MSG("RTC:20%02hhu-%02hhu-%02hhu %02hhu:%02hhu:%02hhu\r\n",
+		RTC_Time.Year,RTC_Time.Month,RTC_Time.Date,
+		RTC_Time.Hour,RTC_Time.Minute,RTC_Time.Second);
 }
 /*-----------------------------------------------------------------------
 *@brief		Parse serial command line
@@ -148,7 +151,15 @@ void ParseSerialCmdLine(char *Rxbuff)
 		}
 		else if(!strncmp(&Rxbuff[1],"RTC",3))//$RTC Setting RTC time
 		{
-			
+			if(sscanf(pos,"20%02hhu-%02hhu-%02hhu-%02hhu-%02hhu-%02hhu",
+							&RTC_Time.Year,&RTC_Time.Month,&RTC_Time.Date,
+							&RTC_Time.Hour,&RTC_Time.Minute,&RTC_Time.Second)!=6)
+				MSG("Wrong time formate.\r\n");
+			else
+			{
+				ModifyTime_RTC(&RTC_Time);
+				MSG("RTC time modified.\r\n");
+			}		
 		}
 		else
 			MSG("Unsupported command type.\r\n");
