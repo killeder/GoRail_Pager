@@ -27,6 +27,7 @@
 #include "HW_SSD1306_OLED.h"	//OLED显示器驱动程序
 #include "HW_EEPROM_24CXX.h"	//EEPROM 24C04驱动程序
 #include "HW_RTC_DS3231.h"	//实时时钟DS3231驱动程序
+#include "HW_SPI_SDCard.h"	//SPI方式驱动的MicroSD卡
 /*-----------宏定义和一些参数------------*/
 #define CRIS_ENTER()	__set_PRIMASK(1)	//进入临界区，关闭总中断
 #define CRIS_EXIT()		__set_PRIMASK(0)	//退出临界区，开启总中断

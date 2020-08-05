@@ -27,6 +27,7 @@
 #include "ComPort_Utility.h" //SerialPort utilities
 #include "HMI_Display_Utils.h" //Human interface and display utilities
 #include "Setting_Utils.h"	//Load/Save/Restore settings with EEPROM
+//#include "ff.h"			//FATFS file system module
 /*-----------Other global definations-----------*/
 #ifndef MSG
 #define MSG(...) printf(__VA_ARGS__)	//define debug printing macro

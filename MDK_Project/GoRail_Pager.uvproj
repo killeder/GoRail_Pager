@@ -503,6 +503,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\HW_RTC_DS3231.c</FilePath>
             </File>
+            <File>
+              <FileName>HW_SPI_SDCard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\HW_SPI_SDCard.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
