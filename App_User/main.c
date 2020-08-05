@@ -57,12 +57,12 @@ int main(void)
 
 	while(true)
 	{
-		if(bit_IsTrue(System_Flags,SYSFLAG_DATA_ARRIVAL))
+		if(bRadioDataArrival)
 		{
 			STATUS_LED_ON();
 			RxData_Handler();//Handle rx data on data arrival
 			STATUS_LED_OFF();
-			bit_SetFalse(System_Flags,SYSFLAG_DATA_ARRIVAL);
+			bRadioDataArrival = false;
 							//Clear rx data arrival flag after handle it
 		}
 		//If serial port received a whole line, then parse it.				

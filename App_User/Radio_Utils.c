@@ -1,13 +1,13 @@
-/*-----------------------------------------------------------------
-*@file     Application_Utils.c
-*@brief    App layer utilities
-*@author   Xie Yingnan(xieyingnan1994@163.com）
+/*-----------------------------------------------------------------------
+*@file     Radio_Utils.h
+*@brief    Radio signal receiving utilities
+*@author   Xie Yinanan(xieyingnan1994@163.com£©
 *@version  1.0
-*@date     2020/08/04
+*@date     2020/08/05
 -----------------------------------------------------------------------*/
 #include "GoRail_Pager.h"
 
-volatile uint8_t System_Flags = 0;	//8-bit uint to storge system flags.
+volatile bool bRadioDataArrival = false;//flag to indicate radio data arrived
 /*-----------------------------------------------------------------------
 *@brief		Detecting CC1101 and reporting its status
 *@param		none
@@ -59,9 +59,8 @@ void CC1101_Initialize(void)
 -----------------------------------------------------------------------*/
 void Rf_Rx_Callback(void)
 {
-	if(bit_IsFalse(System_Flags,SYSFLAG_DATA_ARRIVAL))
-		bit_SetTrue(System_Flags,SYSFLAG_DATA_ARRIVAL);
-											//Set data arrival flag
+	if(!bRadioDataArrival)
+		bRadioDataArrival = true;//Set data arrival flag
 }
 /*-----------------------------------------------------------------------
 *@brief		Read RxFIFO of CC1101 and process the raw data

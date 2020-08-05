@@ -26,7 +26,7 @@
 #include "Setting_Utils.h"	//Load/Save/Restore settings with EEPROM
 //#include "ff.h"			//FATFS file system module
 /*-----------App-Layer  utilities---------------*/
-#include "Radio_Utils.h" //Radio receiving uitls
+#include "Radio_Utils.h" //Radio receiving utils
 #include "ComPort_Utility.h" //SerialPort utilities
 #include "HMI_Display_Utils.h" //Human interface and display utilities
 /*-----------Other global definations-----------*/
