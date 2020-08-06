@@ -24,7 +24,7 @@
 #include "delay.h"	//delays
 #include "POCSAG_ParseLBJ.h" //POCSAG Parse fot LBJ message
 #include "Setting_Utils.h"	//Load/Save/Restore settings with EEPROM
-//#include "ff.h"			//FATFS file system module
+#include "ff.h"			//FATFS file system module
 /*-----------App-Layer  utilities---------------*/
 #include "Radio_Utils.h" //Radio receiving utils
 #include "ComPort_Utility.h" //SerialPort utilities

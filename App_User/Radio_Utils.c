@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------
 *@file     Radio_Utils.h
 *@brief    Radio signal receiving utilities
-*@author   Xie Yinanan(xieyingnan1994@163.com£©
+*@author   Xie Yinanan(xieyingnan1994@163.com)
 *@version  1.0
 *@date     2020/08/05
 -----------------------------------------------------------------------*/

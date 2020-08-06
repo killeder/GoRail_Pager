@@ -357,7 +357,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER,RADIO_DEBUG_MSG_ON,POCSAG_DEBUG_MSG_ON</Define>
               <Undefine></Undefine>
-              <IncludePath>..\App_User;..\Sys_Utils;..\Hardware;..\FirmwareLib;..\CMSIS</IncludePath>
+              <IncludePath>..\App_User;..\Sys_Utils;..\Sys_Utils\FatFS;..\Hardware;..\FirmwareLib;..\CMSIS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -452,6 +452,31 @@
               <FileName>Setting_Utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sys_Utils\Setting_Utils.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Sys/Utils/FatFS</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>
