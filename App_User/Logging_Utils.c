@@ -58,14 +58,14 @@ static bool OpenLogFile(const char* file_name)
 	if(fat_ret == FR_OK)
 	{
 		GetTime_RTC(&RTC_Time);//get RTC time now
-		sprintf(buff,">>20%02hhu-%02hhu-%02hhu %02hhu:%02hhu:%02hhu"
-					 " LBJ Rx log started.\r\n",
+		sprintf(buff,"[20%02hhu-%02hhu-%02hhu %02hhu:%02hhu:%02hhu"
+					 " LBJ Rx log started.]\r\n",
 					 RTC_Time.Year,RTC_Time.Month,RTC_Time.Date,
 					 RTC_Time.Hour,RTC_Time.Minute,RTC_Time.Second);
 		//write above date tips content to file
 		if(f_write(&LogFile_Handle,buff,strlen(buff),&bw) == FR_OK)
 		{
-			//f_close(&LogFile_Handle);//do not close file here
+			f_sync(&LogFile_Handle);//do not close file here,only sync
 			return true;//for further log item appending
 		}
 		else
