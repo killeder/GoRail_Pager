@@ -17,16 +17,19 @@
 #include <stdbool.h>//C99:true...false...
 #include <stdarg.h> //C99:VA_ARGS...
 #include <stdlib.h> //atoi...
-/*----------Low-Layer Hardwares------- ---*/
+/*-----------Hardware-Layer Hardwares----------*/
 #include "Hardware.h"
-/*----------Hi-Layers utils and supporting------------*/
+/*-----------System-Layer supporting------------*/
 #include "bit.h"	//bit operations
 #include "delay.h"	//delays
 #include "POCSAG_ParseLBJ.h" //POCSAG Parse fot LBJ message
-#include "Application_Utils.h" //Application layer uitls
+#include "Setting_Utils.h"	//Load/Save/Restore settings with EEPROM
+#include "ff.h"			//FATFS file system module
+/*-----------App-Layer  utilities---------------*/
+#include "Radio_Utils.h" //Radio receiving utils
 #include "ComPort_Utility.h" //SerialPort utilities
 #include "HMI_Display_Utils.h" //Human interface and display utilities
-#include "Setting_Utils.h"	//Load/Save/Restore settings with EEPROM
+#include "Logging_Utils.h"	//Data Logging utility using FATFS and SDcard
 /*-----------Other global definations-----------*/
 #ifndef MSG
 #define MSG(...) printf(__VA_ARGS__)	//define debug printing macro
@@ -46,7 +49,7 @@
 #endif
 /* Version and build info strings */
 #define APP_NAME_STR "GoRail_Pager"
-#define VERTION_STR "V1.0"
+#define VERTION_STR "V1.1"
 #define BUILD_DATE_STR __DATE__
 #define BUILD_TIME_STR __TIME__
 #endif

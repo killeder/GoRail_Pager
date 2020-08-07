@@ -1,13 +1,13 @@
-/*-----------------------------------------------------------------
-*@file     Application_Utils.c
-*@brief    App layer utilities
-*@author   Xie Yingnan(xieyingnan1994@163.com）
+/*-----------------------------------------------------------------------
+*@file     Radio_Utils.h
+*@brief    Radio signal receiving utilities
+*@author   Xie Yinanan(xieyingnan1994@163.com)
 *@version  1.0
-*@date     2020/08/04
+*@date     2020/08/05
 -----------------------------------------------------------------------*/
 #include "GoRail_Pager.h"
 
-volatile uint8_t System_Flags = 0;	//8-bit uint to storge system flags.
+volatile bool bRadioDataArrival = false;//flag to indicate radio data arrived
 /*-----------------------------------------------------------------------
 *@brief		Detecting CC1101 and reporting its status
 *@param		none
@@ -24,7 +24,7 @@ void CC1101_Initialize(void)
 	//turn on carrier detecting, turn off CRC filtering.
 	//Sync code is 0xEA27(reversed low 16-bit sync code of 
 	//standard POCSAG)
-	cc1101_state = CC1101_Setup(Rf_Freq,1.2f,4.5f,58.0f,0,16);
+	cc1101_state = CC1101_Setup(Settings.RF_Freq,1.2f,4.5f,58.0f,0,16);
 	MSG("CC1101 initialize ");
 	if(cc1101_state == RADIO_ERR_NONE)	//if setup is OK
 	{
@@ -59,9 +59,8 @@ void CC1101_Initialize(void)
 -----------------------------------------------------------------------*/
 void Rf_Rx_Callback(void)
 {
-	if(bit_IsFalse(System_Flags,SYSFLAG_DATA_ARRIVAL))
-		bit_SetTrue(System_Flags,SYSFLAG_DATA_ARRIVAL);
-											//Set data arrival flag
+	if(!bRadioDataArrival)
+		bRadioDataArrival = true;//Set data arrival flag
 }
 /*-----------------------------------------------------------------------
 *@brief		Read RxFIFO of CC1101 and process the raw data
@@ -80,6 +79,7 @@ void RxData_Handler(void)
 	uint32_t actual_len;//actual length of raw data, identical to batch_len
 						//when CC1101 was set to fix-length packet mode
 	POCSAG_RESULT PocsagMsg;//structure for storge POCSAG parse result
+	bool Enable_Show_LBJ = true;
 
 	if((batch_buff=(uint8_t*)malloc(batch_len*sizeof(uint8_t))) != NULL)
 	{
@@ -108,16 +108,24 @@ void RxData_Handler(void)
 			MSG("LBJ Message:%s.\r\n",PocsagMsg.txtMsg);//show decoded text message
 			if(PocsagMsg.Address == LBJ_MESSAGE_ADDR)
 			{
-				ShowMessageLBJ(&PocsagMsg,rssi,lqi);	//show LBJ message on OLED
-				switch(PocsagMsg.FuncCode)				//beeper beeps one or two times
+				if((PocsagMsg.txtMsg[0]=='9') &&
+				    bit_IsFalse(Settings.MiscFlags,FLAG_ENABLE_9XTRAIN_RX))
+				    Enable_Show_LBJ = false;//if Traincode is 9xxxx and settings do not
+					//enable showing 9xxxx trains, then skip this LBJ message.
+				if(Enable_Show_LBJ)
 				{
-					case FUNC_XIAXING:
-						BeeperMode = BEEP_ONCE;//beep one time
-						break;
-					case FUNC_SHANGXING:
-						BeeperMode = DBL_BEEP;//beep two times
-						break;
-					default: BeeperMode = DBL_BEEP; break;
+					ShowMessageLBJ(&PocsagMsg,rssi,lqi);	//show LBJ message on OLED
+					Logger_AppendItem(&PocsagMsg);//append an LBJ log item to logfile
+					switch(PocsagMsg.FuncCode)				//beeper beeps one or two times
+					{
+						case FUNC_XIAXING:
+							BeeperMode = BEEP_ONCE;//beep one time
+							break;
+						case FUNC_SHANGXING:
+							BeeperMode = DBL_BEEP;//beep two times
+							break;
+						default: BeeperMode = DBL_BEEP; break;
+					}
 				}
 			}
 		}
@@ -129,66 +137,4 @@ void RxData_Handler(void)
 		free(batch_buff);
 	}
 	CC1101_StartReceive(Rf_Rx_Callback);	//re-enable rx, wait for data arrival
-}
-/*-----------------------------------------------------------------------
-*@brief		Timer IRQ for providing Time-base
-*@detail 	Timer IRQ cycle is determined when Timer init.
-*         	10ms in this program.
-*@param		none
-*@retval	none
------------------------------------------------------------------------*/
-void INT_TIMER_IRQHandler(void)
-{
-	static uint8_t cnt_beep = 0,cnt_beeptimes = 0;
-	static uint8_t cnt_blink = 0;
-
-	if(TIM_GetITStatus(INT_TIMER,TIM_IT_Update)!=RESET)
-	{
-		switch(BeeperMode)	//beeping
-		{
-		case BEEP_ONCE:	//beep one time
-			BUZZER_ON();
-			if(++cnt_beep >= 10)
-			{ BUZZER_OFF(); BeeperMode = BEEP_OFF; }
-			break;
-		case DBL_BEEP: 
-			if(cnt_beeptimes < 2)
-			{
-				if(cnt_beep <= 8) {BUZZER_ON();}	//beep80ms
-				else {BUZZER_OFF();}				//stop80ms
-				if(++cnt_beep >= 16)				//cycle160ms
-				{cnt_beep = 0; cnt_beeptimes++;}
-			}
-			else
-				BeeperMode = BEEP_OFF;	//stop after 2 beeps
-			break;
-		default:
-			BUZZER_OFF();	//default:turn off beeper
-			cnt_beep = 0;	//clear counter var
-			cnt_beeptimes = 0; //clear beep times countet var
-			break;
-		}
-
-		switch(StatusBlinkMode)	//status led
-		{
-		case BLINK_FAST:
-			if(++cnt_blink >= 10)	//cycle200ms,50%duty
-			{ STATUS_LED_TOGGLE(); cnt_blink = 0; }
-			break;
-		case BLINK_SLOW:
-			if(cnt_blink <= 18) {STATUS_LED_ON();}	//on 180ms
-			else {STATUS_LED_OFF();}			//off 2020ms
-			if(++cnt_blink >= 220)				//cycle 2200ms
-				cnt_blink = 0;
-			break;
-		case BLINK_OFF:
-			STATUS_LED_OFF();
-			cnt_blink = 0;
-			StatusBlinkMode = BLINK_UNDEFINED;
-			break;
-		default:		
-			break;
-		}
-	}
-	TIM_ClearITPendingBit(INT_TIMER,TIM_IT_Update);
 }

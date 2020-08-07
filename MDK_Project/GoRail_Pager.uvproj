@@ -341,7 +341,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -357,7 +357,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER,RADIO_DEBUG_MSG_ON,POCSAG_DEBUG_MSG_ON</Define>
               <Undefine></Undefine>
-              <IncludePath>..\App_User;..\Sys_Utils;..\Hardware;..\FirmwareLib;..\CMSIS</IncludePath>
+              <IncludePath>..\App_User;..\Sys_Utils;..\Sys_Utils\FatFS;..\Hardware;..\FirmwareLib;..\CMSIS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,11 +409,6 @@
               <FilePath>..\App_User\main.c</FilePath>
             </File>
             <File>
-              <FileName>Application_Utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App_User\Application_Utils.c</FilePath>
-            </File>
-            <File>
               <FileName>ComPort_Utility.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App_User\ComPort_Utility.c</FilePath>
@@ -422,6 +417,16 @@
               <FileName>HMI_Display_Utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App_User\HMI_Display_Utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>Radio_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App_User\Radio_Utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>Logging_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App_User\Logging_Utils.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -447,6 +452,31 @@
               <FileName>Setting_Utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sys_Utils\Setting_Utils.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Sys/Utils/FatFS</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sys_Utils\FatFS\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -492,6 +522,21 @@
               <FileName>HW_USART.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Hardware\HW_USART.c</FilePath>
+            </File>
+            <File>
+              <FileName>HW_EEPROM_24CXX.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\HW_EEPROM_24CXX.c</FilePath>
+            </File>
+            <File>
+              <FileName>HW_RTC_DS3231.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\HW_RTC_DS3231.c</FilePath>
+            </File>
+            <File>
+              <FileName>HW_SPI_SDCard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\HW_SPI_SDCard.c</FilePath>
             </File>
           </Files>
         </Group>

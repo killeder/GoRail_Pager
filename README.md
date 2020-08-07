@@ -109,13 +109,15 @@ The operating commands is conducted via serial port, debug and status informatio
 |$| Show this help tips again |
 |$$| List current settings |
 |$V| Show version information |
+|$SAVE| Save settings to EEPROM |
+|$RESTORE| Restore settings to default values|
 |$F=xxx.xxxx| Setting RF Frequency to xxx.xxxx MHz |
-|$RTC=yyyy-mm-dd-hh-mm-ss| Setting RTC time|
 |$EN9X=x| Toggle enable receive 9xxxx traincode|
-|$MQTT=Broker,PubTopic,SubTopic|Setting MQTT Broker, topic to publish, topic to subscribe|
-|$WLANCFG=x| 1:SmartConfig,2:Airkiss|
+|$WLANCFG=x| 0:Airkiss,1:SmartConfig|
+|$MQTT="Broker","PubTopic","SubTopic"|Setting MQTT Broker, topic to publish, topic to subscribe|
 |$SN=str| Setting serial number to str |
 |$DESC=str| Setting string descriptor to str |
+|$RTC=yyyy-mm-dd-hh-mm-ss| Setting RTC time|
 
 ------------
 

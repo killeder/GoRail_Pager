@@ -39,7 +39,9 @@ static void Setup_Routain(void)
 
 	Basic_Hardware_Init();	//Initialize basic hardwares
 	ShowBuildInfo();	//Print build info on serialport
+	Settings_Load();	//Load setting from external eeprom
 	ShowSettings();	//Print setting items on serialport
+	Logger_Init();	//Check SD card presence and make logging file
 	ShowSplashScreen();	//Show splash screen and version info on OLED
 
 	CC1101_Initialize();//Detect CC1101 and initialize
@@ -56,14 +58,12 @@ int main(void)
 
 	while(true)
 	{
-		if(bit_IsTrue(System_Flags,SYSFLAG_DATA_ARRIVAL))
+		if(bRadioDataArrival)
 		{
-			StatusBlinkMode = BLINK_OFF;
 			STATUS_LED_ON();
 			RxData_Handler();//Handle rx data on data arrival
 			STATUS_LED_OFF();
-			StatusBlinkMode = BLINK_SLOW;
-			bit_SetFalse(System_Flags,SYSFLAG_DATA_ARRIVAL);
+			bRadioDataArrival = false;
 							//Clear rx data arrival flag after handle it
 		}
 		//If serial port received a whole line, then parse it.				
