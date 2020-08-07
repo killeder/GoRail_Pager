@@ -8,16 +8,19 @@
 #include "GoRail_Pager.h"
 
 #define LOG_DIR_NAME "LBJ_LOG"	//directory name for logging
+
 FATFS 	FS_Handle;		//FATFS filesystem handle
 FIL 	LogFile_Handle;	//Log file handle
+
 bool 	bLogFileIsReady = false;//flag indicating file for logging is ready
+uint8_t LogStarted_Date;	//store log started date
 /*-----------------------------------------------------------------------
 *@brief		Check directory presence. If directory isn't exists, then
 *        	create one accoring to the given path name.
 *@param		path name to check or create.
 *@retval	false - failed, true - success:the directory is available.
 -----------------------------------------------------------------------*/
-static bool ChkAndCreateDir(const char* path_name)
+static bool ChkAndOpenDir(const char* path_name)
 {
 	DIR 	DIR_Handle;	//FATFS directory handle
 	FRESULT fat_ret;
@@ -59,20 +62,61 @@ static bool OpenLogFile(const char* file_name)
 					 " LBJ Rx log started.\r\n",
 					 RTC_Time.Year,RTC_Time.Month,RTC_Time.Date,
 					 RTC_Time.Hour,RTC_Time.Minute,RTC_Time.Second);
-		//write above content to file
+		//write above date tips content to file
 		if(f_write(&LogFile_Handle,buff,strlen(buff),&bw) == FR_OK)
 		{
-			f_close(&LogFile_Handle);
-			return true;
+			//f_close(&LogFile_Handle);//do not close file here
+			return true;//for further log item appending
 		}
 		else
-			return false;
+			return false;//write date tips failed, return
 	}
 	else
 		return false;	//open file failed, return false
 }
 /*-----------------------------------------------------------------------
-*@brief		Check SD card presence and make logging file if SD card
+*@brief		check and open an logging file
+*@param		none
+*@retval	false - failed, true - success:file and dir are ok
+-----------------------------------------------------------------------*/
+static bool  OpenDirAndFile(void)
+{
+	char Path_name[32] = {0};//absolute path name of directory and logfile
+	//1.check presence of logging root directory
+	//	if directory not presence, then create it.
+	//root directory is named like: SD:/LBJ_LOG
+	sprintf(Path_name,"SD:/%s",LOG_DIR_NAME);
+	if(!ChkAndOpenDir(Path_name))
+		return false;//if creating root directory failed, return!
+	//2.check presence of monthly re-named sub-directory
+	//	if not presence, then create it using current RTC time.
+	//sub-directory is named like: SD:/LBJ_LOG/2020_08
+	GetTime_RTC(&RTC_Time);	//Get RTC time now
+	sprintf(Path_name,"SD:/%s/20%02hhu_%02hhu",LOG_DIR_NAME,
+			RTC_Time.Year,RTC_Time.Month);
+	if(!ChkAndOpenDir(Path_name))
+		return false;//if creating monthly directory failed, return!
+	//3.Open RTC time named log file(if not exits then creates
+	//one using current RTC time)
+	//Log file is named like: SD:/LBJ_LOG/2020_08/LOG_0806.TXT
+	sprintf(Path_name,"SD:/%s/20%02hhu_%02hhu/"
+					  "LOG_%02hhu%02hhu.TXT",LOG_DIR_NAME,
+		RTC_Time.Year,RTC_Time.Month,RTC_Time.Month,RTC_Time.Date);
+	if(!OpenLogFile(Path_name))
+	{
+		bLogFileIsReady = false;//indicate log file isn't ready
+		return false;	//if open log file failed, return!
+	}
+	else
+	{
+		bLogFileIsReady = true;	//setup flag to indicate log file OK
+		LogStarted_Date = RTC_Time.Date;//store log started date
+		MSG("Opened log file: \"%s\".\r\n",Path_name);
+		return true;//file and dir are ok.
+	}
+}
+/*-----------------------------------------------------------------------
+*@brief		Check SD card presence and open logging file if SD card
 *        	exists.
 *@details	For LongFileName(LFN) supporting function of FATFS isn't
 *         	toggled on yet, the file and directory name must be in DOS8.3
@@ -80,10 +124,9 @@ static bool OpenLogFile(const char* file_name)
 *@param		none
 *@retval	none
 -----------------------------------------------------------------------*/
-void ChkCard_CreateLog(void)
+void Logger_Init(void)
 {
 	FRESULT	fat_ret;//FATFS file function return code
-	char Path_name[32] = {0};//absolute path name of directory and logfile
 	//Hardware SPI initialization is included in SD_Init().
 	if(SD_Init() == SD_RESPONSE_NO_ERROR)//if no error occured in SD_Init()
 	{		
@@ -93,43 +136,64 @@ void ChkCard_CreateLog(void)
 		if((fat_ret=f_mount(&FS_Handle,"SD:",1)) == FR_OK)
 		{
 			MSG("OK!\r\n");
-			do
-			{	//1.check presence of logging root directory
-				//	if directory not presence, then create it.
-				//root directory is named like: SD:/LBJ_LOG
-				sprintf(Path_name,"SD:/%s",LOG_DIR_NAME);
-				if(!ChkAndCreateDir(Path_name))
-					break;//if creating root directory failed, break!
-				//2.check presence of monthly re-named sub-directory
-				//	if not presence, then create it using current RTC time.
-				//sub-directory is named like: SD:/LBJ_LOG/2020_08
-				GetTime_RTC(&RTC_Time);	//Get RTC time now
-				sprintf(Path_name,"SD:/%s/20%02hhu_%02hhu",LOG_DIR_NAME,
-						RTC_Time.Year,RTC_Time.Month);
-				if(!ChkAndCreateDir(Path_name))
-					break;//if creating monthly directory failed, break!
-				//3.Open RTC time named log file(if not exits then creates
-				//one using current RTC time)
-				//Log file is named like: SD:/LBJ_LOG/2020_08/LOG_0806.TXT
-				sprintf(Path_name,"SD:/%s/20%02hhu_%02hhu/"
-					"LOG_%02hhu%02hhu.TXT",LOG_DIR_NAME,
-					RTC_Time.Year,RTC_Time.Month,RTC_Time.Month,RTC_Time.Date);
-				if(OpenLogFile(Path_name))//if log file opened okay
-				{
-					bLogFileIsReady = true;	//setup flag to indicate log file OK
-					MSG("Logging file: \"%s\" opened.\r\n",Path_name);
-					return;
-				}
-				else
-					break;//if open log file failed, break!
-
-			}while(0);
-			MSG("Creating Directory/LogFile failed!\r\n");
-			f_unmount("SD:");
+			if(!OpenDirAndFile())//try opening dir and log file
+			{
+				MSG("Opening directory/logFile failed!\r\n");
+				f_unmount("SD:");//if failed, unmount the sd filesystem
+			}
 		}
 		else
 			MSG("Failed! ReturnCode:%hhu\r\n",(uint8_t)fat_ret);
 	}
 	else//Card not presence or wrong type(only supports SD&SDHC below 32GB)
-		MSG("SD card not detected. Supports SD & SDHC only.\r\n");
+		MSG("SD card not detected. Supports SD&SDHC (<=32GB) only.\r\n");
+}
+/*-----------------------------------------------------------------------
+*@brief		append a LBJ message item to log file
+*@param		pointer to POCSAG LBJ message
+*@retval	none
+-----------------------------------------------------------------------*/
+void Logger_AppendItem(POCSAG_RESULT* pLBJ_Msg)
+{
+	char LBJ_Info[3][7] = {{0},{0},{0}};//Store Traincode speed milemark
+	char LogItemLine[45] = {0};
+	uint32_t bw;	//bytes written to file(not used yet)
+
+	if(!bLogFileIsReady)
+		return;//proceeds only if log file is ready
+
+	GetTime_RTC(&RTC_Time);	//Get RTC time now
+	if(RTC_Time.Date != LogStarted_Date)//if logging spands days
+	{
+		if(f_close(&LogFile_Handle) != FR_OK)//close previous log file
+			return;
+		if(!OpenDirAndFile())//try to open a new log file
+		{
+			MSG("Open new log file failed!\r\n");
+			return;
+		}
+	}
+	//split and group txtmsg by every 5 chars
+	for(uint8_t i = 0;i < 3;i++)
+	{
+		strncpy(LBJ_Info[i],pLBJ_Msg->txtMsg+i*5,5);
+	}
+	//LBJ_Info[0]：12345，LBJ_Info[1]：C100C，LBJ_Info[2]：23456
+	//"C"signifies space，"-" signifies non-available
+	LBJ_Info[2][5] = LBJ_Info[2][4];	//Adding "." before the last digit
+	LBJ_Info[2][4] = '.';	//i.e. 2345.6
+	LBJ_Info[1][4] = '\0';//truncate LBJ_Info[1] to 4 chars.i.e. C100
+	//stuff log item line, like following:
+	//2020-08-07	10:53:43	12345	 123km/h	1234.5km
+	sprintf(LogItemLine,"20%02hhu-%02hhu-%02hhu\t%02hhu:%02hhu:%02hhu\t"
+						"%5s\t%4skm/h\t%6skm\r\n",
+						RTC_Time.Year,RTC_Time.Month,RTC_Time.Date,
+					 	RTC_Time.Hour,RTC_Time.Minute,RTC_Time.Second,
+					 	LBJ_Info[0],LBJ_Info[1],LBJ_Info[2]);
+	f_lseek(&LogFile_Handle,f_size(&LogFile_Handle));//locate for appending
+	if(f_write(&LogFile_Handle,LogItemLine,strlen(LogItemLine),&bw) == FR_OK)
+	{	//flush cached data of the writing file to SD card
+		f_sync(&LogFile_Handle);
+		MSG("Logged LBJ message on SD card.\r\n");
+	}
 }

@@ -115,6 +115,7 @@ void RxData_Handler(void)
 				if(Enable_Show_LBJ)
 				{
 					ShowMessageLBJ(&PocsagMsg,rssi,lqi);	//show LBJ message on OLED
+					Logger_AppendItem(&PocsagMsg);//append an LBJ log item to logfile
 					switch(PocsagMsg.FuncCode)				//beeper beeps one or two times
 					{
 						case FUNC_XIAXING:

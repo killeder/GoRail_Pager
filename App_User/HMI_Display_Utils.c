@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------
 *@file     HMI_Display_Utils.c
 *@brief    Human interface and displaying utilities
-*@author   Xie Yingnan(xieyingnan1994@163.com）
+*@author   Xie Yingnan(xieyingnan1994@163.com)
 *@version  1.0
 *@date     2020/08/04
 -----------------------------------------------------------------------*/
@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------*/
 void ShowMessageLBJ(POCSAG_RESULT* POCSAG_Msg,float rssi,uint8_t lqi)
 {
-	char LBJ_Info[3][7] = {{0},{0},{0}};//Stroe Traincode speed milemark
+	char LBJ_Info[3][7] = {{0},{0},{0}};//Store Traincode speed milemark
 										//each reserved 6 characters
 	char Link_Info[2][6] = {{0},{0}};	//RSSI/LQI info
 

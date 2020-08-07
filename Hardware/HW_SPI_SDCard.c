@@ -1080,6 +1080,7 @@ SD_Error SD_GoIdleState(void)
   */
 uint8_t SD_WriteByte(uint8_t Data)
 {
+  CRIS_ENTER();//global disable interrupts
   /*!< Wait until the transmit buffer is empty */
   while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
   {
@@ -1092,7 +1093,7 @@ uint8_t SD_WriteByte(uint8_t Data)
   while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
   {
   }
-  
+  CRIS_EXIT();//global re-enable interrupts
   /*!< Return the byte read from the SPI bus */ 
   return SPI_I2S_ReceiveData(SD_SPI);
 }
@@ -1105,7 +1106,8 @@ uint8_t SD_WriteByte(uint8_t Data)
 uint8_t SD_ReadByte(void)
 {
   uint8_t Data = 0;
-  
+
+  CRIS_ENTER();//global disable interrupts
   /*!< Wait until the transmit buffer is empty */
   while (SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
   {
@@ -1119,7 +1121,8 @@ uint8_t SD_ReadByte(void)
   }
   /*!< Get the received data */
   Data = SPI_I2S_ReceiveData(SD_SPI);
-
+  CRIS_EXIT();//global re-enable interrupts
+  
   /*!< Return the shifted data */
   return Data;
 }
